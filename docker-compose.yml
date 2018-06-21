@@ -1,0 +1,8 @@
+version: '3'
+services:
+    uav-bridge:
+        build: 
+            context: .
+        volumes:
+            - /tmp/.X11-unix:/tmp/.X11-unix
+        network_mode: "host"

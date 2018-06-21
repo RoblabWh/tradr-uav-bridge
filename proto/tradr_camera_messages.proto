@@ -1,0 +1,133 @@
+/**
+* Frist draft of communication between TRADR-System and third party UAV's.
+*
+* Version: 0.1.1
+*/
+
+syntax = "proto3";
+package tradr;
+
+import "tradr_common_messages.proto";
+
+enum CameraISO {
+    AUTO = 0;
+    ISO_25 = 1;
+    ISO_50 = 2;
+    ISO_100 = 3;
+    ISO_200 = 4;
+    ISO_400 = 5;
+    ISO_800 = 6;
+    ISO_1600 = 7;
+    ISO_3200 = 8;
+    ISO_6400 = 9;
+    ISO_12800 = 10;
+    ISO_25600 = 11;
+}
+
+
+enum VideoType {
+    VIDEO_TYPE_H264 = 0;
+    VIDEO_TYPE_MPEGTS_H264 = 1;
+}
+
+
+enum StillImageType {
+    STILL_IMAGE_TYPE_JPG = 0;
+    STILL_IMAGE_TYPE_RAW = 1;
+}
+
+
+message CameraCapabilitiesMsg {
+
+    repeated VideoOutputFormatMsg videoOutputFormats = 1;
+    repeated StillImageOutputFormatMsg stillImageOutputFormats = 2;
+
+    /* Roll */
+    bool rollCapability = 3;
+    float rollLimitMax = 4;
+    float rollLimitMin = 5;
+
+    /* Pitch */
+    bool pitchCapability = 6;
+    float pitchLimitMax = 7;
+    float pitchLimitMin = 8;
+    
+    /* Yaw */
+    bool yawCapability = 9;
+    float yawLimitMax = 10;
+    float yawLimitMin = 11;
+    
+    // Capabilities for CameraSettings (aperture, ISO, etc.) need to be added
+}
+
+
+message CameraSettingsMsg {
+    string aperture = 1; // maybe switch to enum or percentage?
+    string shutterSpeed = 2; // maybe switch to enum or percentage?
+    CameraISO iso = 3;
+    string ratio = 4; // TBD: clarify content meaning (4:3, 16:9, etc.?), maybe switch to enum or percentage?
+}
+
+
+message StillImageOutputFormatMsg {
+    ResolutionMsg resolution = 1;
+    StillImageType stillImageType = 2;
+}
+
+
+message VideoOutputFormatMsg {
+    ResolutionMsg resolution = 1;
+    VideoType videoType = 2; // 
+    uint32 fps = 3; 
+}
+
+
+message ResolutionMsg {
+    uint32 width = 1;
+    uint32 height = 2;
+}
+
+
+message VideostreamStartReqMsg {
+    uint32 assetID = 1;
+    VideoOutputFormatMsg recordOutputFormat = 2; // may be empty --> no recording
+    VideoOutputFormatMsg streamOutputFormat = 3; // may be empty --> no streaming
+    string streamRecipientAddress = 4;
+    string streamRecipientPort = 5;
+}
+
+
+message VideostreamStartAckMsg {
+    VideoOutputFormatMsg recordOutputFormat = 1;
+    VideoOutputFormatMsg streamOutputFormat = 2;
+
+    bool iframeInjection = 3;
+    bytes iframeData = 4;
+}
+
+
+message VideostreamStopReqMsg {
+    uint32 stopID = 1;
+}
+
+
+message VideostreamDataMsg {    
+    uint32 assetID = 1;
+    bytes data = 2;
+    uint32 size = 6;
+    PoseMsg assetPose = 3; 
+    PoseMsg cameraPose = 4; 
+    VideoOutputFormatMsg videoOutputFormat = 5;
+}
+
+
+message StillImageDataMsg {
+    uint32 assetID = 1;
+    bytes data = 2;
+    CameraSettingsMsg camSettings = 3;
+    PoseMsg assetPose = 4; 
+    PoseMsg cameraPose = 5; 
+    StillImageOutputFormatMsg stillImageOutputFormat = 6;
+}
+
+

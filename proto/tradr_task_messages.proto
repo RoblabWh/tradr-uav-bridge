@@ -1,0 +1,90 @@
+/**
+* Frist draft of communication between TRADR-System and third party UAV's.
+*
+* Version: 0.1.1
+*/
+
+syntax = "proto3";
+package tradr;
+
+import "tradr_camera_messages.proto";
+import "tradr_common_messages.proto";
+
+message TaskMsg {
+    uint32 taskID = 1; // Mission ID 0 is invalid // only used if TaskMsg is sent by bridge
+    uint32 assetID = 2;
+    repeated WaypointMsg waypoints = 3;
+    bool startImmediately = 4;
+}
+
+message WaypointMsg {
+    uint32 waypointID = 1;
+    PoseMsg uavPose = 2;
+    repeated ImageRequestMsg imageRequests = 3;
+    float velocity = 4;
+}
+
+message ImageRequestMsg {
+    CameraSettingsMsg camSettings = 1;
+    StillImageOutputFormatMsg recordOutputFormat = 2; // may be empty --> no recording
+    StillImageOutputFormatMsg liveTransmissionOutputFormat = 3; // may be empty --> no live transmission
+    PoseMsg camPose = 4;
+}
+
+message TaskRespMsg {
+    bool taskACK = 1;
+    uint32 taskID = 2; // Mission ID 0 is invalid
+}
+
+message SortieStatusMsg {
+    uint32 currentTaskID = 1;  // Task ID 0 is invalid
+    uint32 currentWaypointID = 2;  // Way currentWaypointID = 2;  // Waypoint ID 0 is invalid
+}
+
+message TaskFeedbackMsg {
+    oneof TaskStatusMessageOneOf {
+        TaskStatusMsg taskStatus = 1;
+        WaypointStatusMsg waypointStatus = 2;
+        ActionStatusMsg actionStatus = 3;
+    }
+}
+
+message TaskStatusMsg {
+    enum Status {
+        WAIT_FOR_EXECUTION = 0;
+        EXECUTION = 1;
+        FINISHED = 2;
+        CANCELED = 3;
+    }
+
+    uint32 taskID = 1;
+    Status status = 10;
+}
+
+message WaypointStatusMsg {
+    enum Status {
+        WAIT_FOR_EXECUTION = 0;
+        EXECUTION_FLYING_TO_WAYPOINT = 1;
+        EXECUTION_DOING_ACTIONS = 2;
+        FINISHED = 3;
+        CANCELED = 4;
+    }
+
+    uint32 waypointID = 1;
+    uint32 taskID = 2;
+    Status status = 10;
+}
+
+message ActionStatusMsg {
+    enum Status {
+        WAIT_FOR_EXECUTION = 0;
+        EXECUTION = 1;
+        FINISHED = 2;
+        CANCELED = 3;
+    }
+
+    uint32 taskID = 1;
+    uint32 waypointID = 2;
+    uint32 actionID = 3;
+    Status status = 10;
+}

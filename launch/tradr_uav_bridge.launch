@@ -1,0 +1,5 @@
+<launch>
+
+    <node name="TradrUavBridge" pkg="tradr_uav_bridge" type="TradrUavBridge" output="screen"/>
+
+</launch>

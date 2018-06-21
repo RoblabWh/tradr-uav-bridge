@@ -1,0 +1,26 @@
+/**
+* Frist draft of communication between TRADR-System and third party UAV's.
+*
+* Version: 0.1.1
+*/
+
+syntax = "proto3";
+package tradr;
+
+
+
+message PoseMsg {
+
+    /// Degree [0.0; 360.0) WGS84 Latitude NaN: unknown
+    float latitude = 1;
+    /// Degree [-90.0; 90.0] WGS84 Longitude NaN: unknown
+    float longitude = 2;
+    /// m [-10.0; +100.0] AMSL Altitude NaN: unknown
+    float altitude = 3;
+    /// Degree [-180.0; + 180.0) 0°: +90°: NaN: unknown
+    float roll = 4;
+    /// Degree [-180.0; + 180.0) 0°: aligned to horizont +90°: aligned to space -90°: aligned to ground NaN: unknown
+    float pitch = 5;
+    /// Degree [-180.0; + 180.0) 0°: aligned to north +90°: aligned to east -90°: aligned to west -180°: aligned to south NaN: unknown
+    float yaw = 6;
+}

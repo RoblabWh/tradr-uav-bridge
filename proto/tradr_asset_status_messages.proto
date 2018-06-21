@@ -1,0 +1,42 @@
+/**
+* Frist draft of communication between TRADR-System and third party UAV's.
+*
+* Version: 0.1.1
+*/
+
+syntax = "proto3";
+package tradr;
+
+import "tradr_common_messages.proto";
+import "tradr_task_messages.proto";
+
+message AssetStatusMsg {
+    int32 timestamp = 1; /// UNIX epoch time
+    repeated AssetInformationMsg assetInformation = 2;
+}
+
+message AssetInformationMsg {
+    uint32 assetID = 1;
+    
+    /// percentage [0; 100]
+    float batteryStatus = 2;
+    
+    AssetVelocityMsg assetVelocity = 3;
+    PoseMsg assetPose = 4;
+    SortieStatusMsg sortieStatus = 5;
+}
+
+message AssetVelocityMsg {
+    /// m/s [-100.0; 100.0] Positive: forward movement negative: backward movement NaN: unknown
+    float velX = 1;
+    /// m/s [-100.0; 100.0] Positive: right movement negative: left movement NaN: unknown
+    float velY = 2;
+    /// m/s [-100.0; 100.0] Positive: down movement negative: up movement NaN: unknown
+    float velZ = 3;
+    /// Degree/s [-2160.0; +2160.0] Positive: clockwise rotation negative: counter clockwise rotation NaN: unknown
+    float velRoll = 4;
+    /// Degree/s [-2160.0; +2160.0] Positive: clockwise rotation negative: counter clockwise rotation NaN: unknown
+    float velPitch = 5;
+    /// Degree/s [-2160.0; +2160.0] Positive: clockwise rotation negative: counter clockwise rotation NaN: unknown
+    float velYaw = 6;
+}
